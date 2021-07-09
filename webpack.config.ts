@@ -20,6 +20,10 @@ const config: Configuration = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
     },
+    performance: {
+        maxEntrypointSize: 500000,
+        maxAssetSize: 500000,
+    },
 };
 
 export default config;

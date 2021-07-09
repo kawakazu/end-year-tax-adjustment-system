@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Checkbox, Grid, TextField } from '@material-ui/core';
+import { Button, Checkbox, Grid, TextField } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
@@ -30,7 +30,7 @@ const useStyle = makeStyles((theme: Theme) =>
         root: {
             '& > *': {
               margin: theme.spacing(1),
-              width: 200,
+              width: 800,
             },
         },
         textField: {
@@ -38,6 +38,45 @@ const useStyle = makeStyles((theme: Theme) =>
         },
     }),
 );
+
+type Item = {
+    id: string;
+    name: string;
+    require: boolean;
+}
+
+type informations = {
+    shcool: string;
+    stuffNum: number;
+    name: string;
+    ruby: string;
+    address: string;
+}
+
+const InputInfo: React.VFC<Item> = (props: Item) => {
+    if (props.require) {
+        return (
+            <Grid item xs={12}>
+                <TextField 
+                    required
+                    id={props.id} 
+                    label={props.name} 
+                    aria-describedby="component-helper-text"
+            />
+            </Grid>
+        );
+    } else {
+        return (
+            <Grid item xs={12}>
+                <TextField 
+                    id={props.id} 
+                    label={props.name} 
+                    aria-describedby="component-helper-text"
+                />
+            </Grid>
+        );
+    }
+}
 
 export default function BasicInfo() {
     const classes = useStyle();
@@ -52,85 +91,19 @@ export default function BasicInfo() {
                     <Grid item xs={12}>
                         <Typography variant="h5" component="h2">本人情報</Typography>
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            required
-                            id="school-required" 
-                            label="学校名" 
-                            aria-describedby="component-helper-text"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            required
-                            id="staff-num-required" 
-                            label="職員番号" 
-                            aria-describedby="component-helper-text"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            required
-                            id="name-required" 
-                            label="名前" 
-                            aria-describedby="component-helper-text"
-                            
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            required
-                            id="ruby-required" 
-                            label="フリガナ" 
-                            aria-describedby="component-helper-text"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            required
-                            id="addres-required" 
-                            label="住所" 
-                            aria-describedby="component-helper-text"
-                        />
-                    </Grid>
+                    <InputInfo id="school-required" name="学校名" require={true} />
+                    <InputInfo id="stuff-num-required" name="職員番号" require={true} />
+                    <InputInfo id="name-required" name="名前" require={true} />
+                    <InputInfo id="ruby-required" name="フリガナ" require={true} />
+                    <InputInfo id="address-required" name="住所" require={true} />
                     <Grid item xs={12}>
                         <Typography variant="h5" component="h2">配偶者情報</Typography>   
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            id="pertner-num" 
-                            label="個人番号" 
-                            aria-describedby="component-helper-text"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            id="partner-name" 
-                            label="名前" 
-                            aria-describedby="component-helper-text"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            id="pertner-ruby" 
-                            label="フリガナ" 
-                            aria-describedby="component-helper-text"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            id="partner-address" 
-                            label="住所" 
-                            aria-describedby="component-helper-text"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            id="partner-birthdate" 
-                            label="生年月日" 
-                            aria-describedby="component-helper-text"
-                        />
-                    </Grid>
+                    <InputInfo id="partner-num" name="個人番号" require={false} />
+                    <InputInfo id="partner-name" name="名前" require={false} />
+                    <InputInfo id="partner-ruby" name="フリガナ" require={false} />
+                    <InputInfo id="partner-address" name="住所" require={false} />
+                    <InputInfo id="partner-birthday" name="生年月日" require={false} />
                     <Grid item xs={12}>
                         <FormControlLabel
                             id="nonresident"
@@ -140,12 +113,11 @@ export default function BasicInfo() {
                             labelPlacement="end"
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextField 
-                            id="nonresident-verification" 
-                            label="非居住者である配偶者と生計を一にする事実" 
-                            aria-describedby="component-helper-text"
-                        />
+                    <InputInfo id="partner-num" name="非移住者である配偶者と生計を一にする事実" require={false} />
+                    
+                    <Grid item xs={10}></Grid>
+                    <Grid item xs={2}>
+                        <Button variant="contained" color="primary">テスト</Button>
                     </Grid>
                 </Grid>
             </form>

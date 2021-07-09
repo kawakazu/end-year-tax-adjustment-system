@@ -23,6 +23,6 @@
     "react-dom": "^17.0.2"
   },
   "scripts": {
-    "dev": "webpack server --open --config ./webpack.config.ts"
+    "dev": "webpack server --mode development --open --config ./webpack.config.ts"
   }
 }
