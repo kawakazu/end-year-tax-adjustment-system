@@ -192,11 +192,11 @@ const IncomCal = (props: Props) => {
         mode: 'onSubmit',
         reValidateMode: 'onChange',
         defaultValues: {
-            income1: 8750000,
+            income1: 0,
             bussinessInc1: 0,
             bussinessExp1: 0,
-            miscellaneousInc1: 300000,
-            miscellaneousExp1: 25000,
+            miscellaneousInc1: 0,
+            miscellaneousExp1: 0,
             dividendInc1: 0,
             dividendExp1: 0,
             propertyInc1: 0,
@@ -205,15 +205,15 @@ const IncomCal = (props: Props) => {
             retirementExp1: 0,
             exceptInc1: 0,
             exceptExp1: 0,
-            income2: 2000000,
+            income2: 0,
             bussinessInc2: 0,
             bussinessExp2: 0,
             miscellaneousInc2: 0,
             miscellaneousExp2: 0,
-            dividendInc2: 120000,
-            dividendExp2: 20000,
-            propertyInc2: 180000,
-            propertyExp2: 30000,
+            dividendInc2: 0,
+            dividendExp2: 0,
+            propertyInc2: 0,
+            propertyExp2: 0,
             retirementInc2: 0,
             retirementExp2: 0,
             exceptInc2: 0,
@@ -268,11 +268,11 @@ const IncomCal = (props: Props) => {
         incomeCalFlag = true;
         incomeCalData = {
             earnings1: values.income1,
-            income1: selfIncomeAmount1,
-            exIncome1: incomeQuote1,
+            income1: incomeQuote1,
+            exIncome1: selfNoSalarySum1,
             earnings2: values.income2,
-            income2: selfIncomeAmount2,
-            exIncome2: incomeQuote2
+            income2: incomeQuote2,
+            exIncome2: selfNoSalarySum2
         }
         console.log(incomeCalData);
         setOpen(false);

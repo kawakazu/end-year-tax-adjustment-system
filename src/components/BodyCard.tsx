@@ -38,27 +38,44 @@ function createExcel() {
         "incomeCal": incomeCalData,
         "incomeAdjust": incomeAdjustData
     }
+    
+    console.log(basicInfoFlag);
     // Excelを作成し、ダウンロードする。
     if (basicInfoFlag && incomeCalFlag && incomeAdjustFlag) {
-        const url = ' http://localhost:8000/download';
-        axios.post(url, param, {
-                responseType: "blob"
-            })
-            .then(response => {
-                const data = response.data;
-                console.log(response);
-                const url = URL.createObjectURL( new Blob([data], { type:  data.type }) );
-                const link = document.createElement("a");
-                link.href = url;
-                link.setAttribute("download", "Deduction_application.xlsx");
-                document.body.appendChild(link);
-                link.click();
-                URL.revokeObjectURL(url);
-                document.body.removeChild(link);
-            })
-            .catch(error => {
-                console.log(error);
-            })
+        let partnerFlag = true;
+        if (param["incomeCal"]["income2"] != 0 && 
+            param["basicInfo"]["partnerNum"] == "" ||
+            param["basicInfo"]["partnerLN"] == "" ||
+            param["basicInfo"]["partnerFN"] == "" ||
+            param["basicInfo"]["partnerLNRuby"] == "" ||
+            param["basicInfo"]["partnerFNRuby"] == "" ||
+            param["basicInfo"]["partnerBD"] == ""
+        ) {
+            partnerFlag = false;
+        }
+        if (partnerFlag) {
+            const url = ' http://localhost:8000/download';
+            axios.post(url, param, {
+                    responseType: "blob"
+                })
+                .then(response => {
+                    const data = response.data;
+                    console.log(response);
+                    const url = URL.createObjectURL( new Blob([data], { type:  data.type }) );
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute("download", "Deduction_application.xlsx");
+                    document.body.appendChild(link);
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    document.body.removeChild(link);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        } else {
+            alert("個人情報の配偶者情報もしくは所得金額計算シートの配偶者の合計所得金を入力してください。");
+        }
     } else { // シートを入力していない場合
         let message: string = '';
         if (!basicInfoFlag) { message += "基本情報シートを入力してください。\n"; }
@@ -101,7 +118,7 @@ const BodyCard = () => {
                 </ListItem>
                 <ListItem>
                     <ListItemText 
-                    primary={<Button variant="contained" size='medium' color="primary" onClick={() => createExcel()}>申告書印刷シート</Button>}
+                    primary={<Button variant="contained" size='medium' color="primary" onClick={() => createExcel()}>申告書生成シート</Button>}
                     secondary="給与所得者の配偶者控除申告書を印刷する"
                     />
                 </ListItem>
