@@ -15,7 +15,7 @@ $ git clone https://github.com/kawakazu/end-year-tax-adjustment-system.git
 $ cd end-year-tax-adjustment
 $ yarn install
 $ cd backend
-$ pip install  requirements.txt
+$ pip install -r requirements.txt
 ```
 ### run
 backendディレクトリで
