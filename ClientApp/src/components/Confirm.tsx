@@ -10,6 +10,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const inputDataNameList: string[] = [
     "会社",
@@ -137,13 +138,13 @@ async function Update(
         ApplicationUserId: incomeAdjustList[1],
         RadioGroup: incomeAdjustList[2],
         DependentsNum: incomeAdjustList[3],
-        DependentsBD: incomeAdjustList[4],
+        DependentsDB: incomeAdjustList[4],
         DependentsName: incomeAdjustList[5],
         DependentsRuby: incomeAdjustList[6],
         DependentsAdr: incomeAdjustList[7],
         DependentsRel: incomeAdjustList[8],
         DependentsInc: incomeAdjustList[9],
-        DisabilityPrsEvid: incomeAdjustList[10]
+        DependentsPrsEvid: incomeAdjustList[10]
     })
     .then((results) => {
         console.log(results);
@@ -156,8 +157,9 @@ async function Update(
 
 function Confirm(props: any) {
     const { currentState } = React.useContext(Context);
+    const notifyError = () => toast.error('データの送信に失敗しました。少し待ってからリトライしてください');
     const onSubmit = async () => {
-        alert(JSON.stringify(currentState));
+        // alert(JSON.stringify(currentState));
 
         const basicInfoList = [];
         const incomeCalList = [];
@@ -180,91 +182,15 @@ function Confirm(props: any) {
             }
         }
         // DB更新
-        Update(basicInfoList, incomeCalList, incomeAdjustList);
-
-        // アカウント作成時にDB作成
-        // await axios.post('/api/InfoInput/PostBasicInfo', 
-        // { 
-        //     ApplicationUserId: 1,
-        //     Company: "sample",
-        //     StuffNum: "9999999999999",
-        //     CompanyAddress: "sample",
-        //     TaxOffice: "sample",
-        //     StuffName: "sample",
-        //     StuffRuby: "sample",
-        //     StuffAddress: "sample", 
-        //     PartnerNum: "",
-        //     PartnerName: "",
-        //     PartnerRuby: "",
-        //     PartnerAddress: "",
-        //     PartnerBD: ""
-        // })
-        // .then((results) => {
-        //     console.log(results);
-        // })
-        // .catch((error) => {
-        //     console.log('通信失敗');
-        //     console.log(error.response);
-        // });
-
-        // await axios.post('/api/infoinput/postincomecal', 
-        // { 
-        //     ApplicationUserId: 1,
-        //     Income1: 0,
-        //     BussinessInc1: 0,
-        //     BussinessExp1: 0,
-        //     MiscellaneousInc1: 0,
-        //     MiscellaneousExp1: 0,
-        //     DividendInc1: 0,
-        //     DividendExp1: 0,
-        //     PropertyInc1: 0,
-        //     PropertyExp1: 0,
-        //     RetirementInc1: 0,
-        //     RetirementExp1: 0,
-        //     ExceptInc1: 0,
-        //     ExceptExp1: 0,
-        //     Income2: 0,
-        //     BussinessInc2: 0,
-        //     BussinessExp2: 0,
-        //     MiscellaneousInc2: 0,
-        //     MiscellaneousExp2: 0,
-        //     DividendInc2: 0,
-        //     DividendExp2: 0,
-        //     PropertyInc2: 0,
-        //     PropertyExp2: 0,
-        //     RetirementInc2: 0,
-        //     RetirementExp2: 0,
-        //     ExceptInc2: 0,
-        //     ExceptExp2: 0,
-        // })
-        // .then((results) => {
-        //     console.log(results);
-        // })
-        // .catch((error) => {
-        //     console.log('通信失敗');
-        //     console.log(error.response);
-        // });
-
-        // await axios.post('/api/infoinput/postincomeadjust', 
-        // { 
-        //     ApplicationUserId: 1,
-        //     RadioGroup: "0",
-        //     DependentsNum: "",
-        //     DependentsDB: "", // colum名変更する
-        //     DependentsName: "",
-        //     DependentsRuby: "",
-        //     DependentsAdr: "",
-        //     DependentsRel: "",
-        //     DependentsInc: "",
-        //     DependentsPrsEvid: ""
-        // })
-        // .then((results) => {
-        //     console.log(results);
-        // })
-        // .catch((error) => {
-        //     console.log('通信失敗');
-        //     console.log(error.response);
-        // });
+        Update(basicInfoList, incomeCalList, incomeAdjustList)
+            .then(data => {
+                console.log(JSON.stringify(data));
+                props.handleNext();
+            })
+            .catch(err => {
+                notifyError();
+                console.log(err);
+            });
     };
     const inputDataList = [];
     var id: number = 0;

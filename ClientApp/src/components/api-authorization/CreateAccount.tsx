@@ -1,13 +1,8 @@
 import React from 'react';
-import { Link as RouterLink } from "react-router-dom";
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useForm, Controller } from 'react-hook-form';
@@ -26,36 +21,138 @@ type User = {
     password: string;
 }
 
-const loginSchema = Yup.object().shape({
+// アカウント専用のvalidatinoが必要
+const createAccountSchema = Yup.object().shape({
     mail: Yup.string().email().required('メールアドレスを入力してください'),
     password: Yup.string().required('パスワードを入力してください'),
 });
 
-export default function Login(props: Props) {
+async function CreateInfoInput(id: number) {
+    await axios.post('/api/InfoInput/PostBasicInfo', 
+    { 
+        ApplicationUserId: id,
+        Company: "sample",
+        StuffNum: "9999999999999",
+        CompanyAddress: "sample",
+        TaxOffice: "sample",
+        StuffName: "sample",
+        StuffRuby: "sample",
+        StuffAddress: "sample", 
+        PartnerNum: "",
+        PartnerName: "",
+        PartnerRuby: "",
+        PartnerAddress: "",
+        PartnerBD: ""
+    })
+    .then((results) => {
+        console.log(results);
+    })
+    .catch((error) => {
+        console.log('通信失敗');
+        console.log(error.response);
+    });
+
+    await axios.post('/api/infoinput/postincomecal', 
+    { 
+        ApplicationUserId: id,
+        Income1: 0,
+        BussinessInc1: 0,
+        BussinessExp1: 0,
+        MiscellaneousInc1: 0,
+        MiscellaneousExp1: 0,
+        DividendInc1: 0,
+        DividendExp1: 0,
+        PropertyInc1: 0,
+        PropertyExp1: 0,
+        RetirementInc1: 0,
+        RetirementExp1: 0,
+        ExceptInc1: 0,
+        ExceptExp1: 0,
+        Income2: 0,
+        BussinessInc2: 0,
+        BussinessExp2: 0,
+        MiscellaneousInc2: 0,
+        MiscellaneousExp2: 0,
+        DividendInc2: 0,
+        DividendExp2: 0,
+        PropertyInc2: 0,
+        PropertyExp2: 0,
+        RetirementInc2: 0,
+        RetirementExp2: 0,
+        ExceptInc2: 0,
+        ExceptExp2: 0,
+    })
+    .then((results) => {
+        console.log(results);
+    })
+    .catch((error) => {
+        console.log('通信失敗');
+        console.log(error.response);
+    });
+
+    await axios.post('/api/infoinput/postincomeadjust', 
+    { 
+        ApplicationUserId: id,
+        RadioGroup: "0",
+        DependentsNum: "",
+        DependentsDB: "", // colum名変更する
+        DependentsName: "",
+        DependentsRuby: "",
+        DependentsAdr: "",
+        DependentsRel: "",
+        DependentsInc: "",
+        DependentsPrsEvid: ""
+    })
+    .then((results) => {
+        console.log(results);
+    })
+    .catch((error) => {
+        console.log('通信失敗');
+        console.log(error.response);
+    });
+}
+
+const CreateAccount = (props: Props) => {
     const { control, handleSubmit, formState:{ errors } } = useForm<User>({
         defaultValues: {
             mail: '',
             password: '',
         },
-        resolver: yupResolver(loginSchema)
+        resolver: yupResolver(createAccountSchema)
     });
 
     const onSubmit = async (data: User) => {
-        await axios.post('/api/auth/login', 
+        console.log(data);
+        await axios.post('/api/auth/create', 
         { 
-            login_id: data.mail, 
-            password: data.password 
+            Email: data.mail, 
+            Password: data.password 
         })
         .then((results) => {
+            // results.data.applicationUserId
             console.log(results);
-            props.setAuthenticated();
-            // Cookieの設定
-            document.cookie = "id=" + results.data.applicationUserId;
-            idList['id'] = results.data.applicationUserId;
+            axios.post('/api/auth/login', 
+            { 
+                login_id: data.mail, 
+                password: data.password 
+            })
+            .then((results) => {
+                console.log(results);
+                // アカウント作成時にDB作成
+                CreateInfoInput(results.data.applicationUserId);
+                props.setAuthenticated();
+                // Cookieの設定
+                document.cookie = "id=" + results.data.applicationUserId;
+                idList['id'] = results.data.applicationUserId;
+            })
+            .catch((error) => {
+                console.log('通信失敗');
+                console.log(error);
+            });
         })
         .catch((error) => {
             console.log('通信失敗');
-            console.log(error);
+            console.log(error.response);
         });
     }
 
@@ -70,11 +167,8 @@ export default function Login(props: Props) {
                 alignItems: 'center',
             }}
             >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                <LockOutlinedIcon />
-            </Avatar>
             <Typography component="h1" variant="h5">
-                Sign in
+                Create Account
             </Typography>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
                 <Controller
@@ -121,22 +215,12 @@ export default function Login(props: Props) {
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                 >
-                Sign In
+                Create
                 </Button>
-                <Grid container>
-                <Grid item>
-                    <Link
-                        component={RouterLink}
-                        to="/create-account"
-                        color="primary"
-                    >
-                    {"Create account"}
-                    </Link> 
-                    
-                </Grid>
-                </Grid>
             </Box>
             </Box>
         </Container>
     );
 }
+
+export default CreateAccount;

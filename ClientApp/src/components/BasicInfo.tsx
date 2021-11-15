@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
@@ -8,11 +8,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { Context } from './Context';
 import { idList } from '../App';
-
 import axios from 'axios';
 
 
-export interface BasicInfoDatas {
+interface BasicInfoDatas {
     company: string;
     stuffNum: string;
     companyAddress: string;
@@ -27,19 +26,19 @@ export interface BasicInfoDatas {
     partnerBD: string;
 }
 
-const schema = Yup.object().shape({
-    company: Yup.string().required(),
-    stuffNum:  Yup.number().positive().integer().required(),
-    companyAddress: Yup.string().required(),
-    taxOffice: Yup.string().required(),
-    stuffName: Yup.string().required(),
-    stuffRuby: Yup.string().required(),
-    stuffAddress: Yup.string().required(),
-    partnerNum: Yup.number().positive().integer(),
-    partnerName: Yup.string(),
-    partnerRuby: Yup.string(),
-    partnerAddress: Yup.string(),
-    partnerBD: Yup.string(),
+const basicSchema = Yup.object().shape({
+    company: Yup.string().required('必須項目です'),
+    stuffNum:  Yup.string().required('必須項目です').matches(/^[0-9]{13}$/, '13桁の数字を入力してください'),
+    companyAddress: Yup.string().required('必須項目です'),
+    taxOffice: Yup.string().required('必須項目です'),
+    stuffName: Yup.string().required('必須項目です').matches(/^(.+?)[\s　]+(.+)$/, 'xx xxで入力してください'),
+    stuffRuby: Yup.string().required('必須項目です').matches(/^[ァ-ヶー]+[\s　][ァ-ヶー]+$/, 'xx xx（半角カタカナ）で入力してください'),
+    stuffAddress: Yup.string().required('必須項目です'),
+    partnerNum: Yup.string().matches(/^[0-9]{12}$/, { message: '12桁の数字を入力してください', excludeEmptyString: true }),
+    partnerName: Yup.string().matches(/^(.+?)[\s　]+(.+)$/, { message: 'xx xxで入力してください', excludeEmptyString: true }),
+    partnerRuby: Yup.string().matches(/^[ァ-ヶー]+[\s　][ァ-ヶー]+$/, { message: 'xx xx（半角カタカナ）で入力してください', excludeEmptyString: true }),
+    partnerAddress: Yup.string().typeError('入力が間違っています'),
+    partnerBD: Yup.string().matches(/^[0-9]{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/, { message: 'xxxx/xx/xx（数字）の形で入力してください', excludeEmptyString: true }),
 });
 
 const BasicInfo = (props: any) => {    
@@ -58,7 +57,8 @@ const BasicInfo = (props: any) => {
             partnerRuby: '',
             partnerAddress: '',
             partnerBD: ''
-        }
+        },
+        resolver: yupResolver(basicSchema)
     });
     useEffect(() => {
         var url: string = '/api/infoinput/getbasicinfo/' + idList.id;
@@ -87,9 +87,8 @@ const BasicInfo = (props: any) => {
                                 label="会社"
                                 fullWidth
                                 margin="normal"
-                                // defaultValue={users}
-                                // error={errors.company ? true : false}
-                                // helperText={errors.company?.message}
+                                error={errors.company ? true : false}
+                                helperText={errors.company?.message}
                             />
                         )}
                     />
@@ -102,6 +101,8 @@ const BasicInfo = (props: any) => {
                                 label="個人番号"
                                 fullWidth
                                 margin="normal"
+                                error={errors.stuffNum ? true : false}
+                                helperText={errors.stuffNum?.message}
                             />
                         )}
                     />
@@ -114,6 +115,8 @@ const BasicInfo = (props: any) => {
                                 label="会社の住所"
                                 fullWidth
                                 margin="normal"
+                                error={errors.companyAddress ? true : false}
+                                helperText={errors.companyAddress?.message}
                             />
                         )}
                     />
@@ -126,6 +129,8 @@ const BasicInfo = (props: any) => {
                                 label="所轄税務署"
                                 fullWidth
                                 margin="normal"
+                                error={errors.taxOffice ? true : false}
+                                helperText={errors.taxOffice?.message}
                             />
                         )}
                     />
@@ -138,6 +143,8 @@ const BasicInfo = (props: any) => {
                                 label="名前"
                                 fullWidth
                                 margin="normal"
+                                error={errors.stuffName ? true : false}
+                                helperText={errors.stuffName?.message}
                             />
                         )}
                     />
@@ -150,6 +157,8 @@ const BasicInfo = (props: any) => {
                                 label="ナマエ"
                                 fullWidth
                                 margin="normal"
+                                error={errors.stuffRuby ? true : false}
+                                helperText={errors.stuffRuby?.message}
                             />
                         )}
                     />
@@ -162,6 +171,8 @@ const BasicInfo = (props: any) => {
                                 label="住所"
                                 fullWidth
                                 margin="normal"
+                                error={errors.stuffAddress ? true : false}
+                                helperText={errors.stuffAddress?.message}
                             />
                         )}
                     />
@@ -175,6 +186,8 @@ const BasicInfo = (props: any) => {
                                 label="個人番号"
                                 fullWidth
                                 margin="normal"
+                                error={errors.partnerNum ? true : false}
+                                helperText={errors.partnerNum?.message}
                             />
                         )}
                     />
@@ -187,6 +200,8 @@ const BasicInfo = (props: any) => {
                                 label="名前"
                                 fullWidth
                                 margin="normal"
+                                error={errors.partnerName ? true : false}
+                                helperText={errors.partnerName?.message}
                             />
                         )}
                     />
@@ -199,6 +214,8 @@ const BasicInfo = (props: any) => {
                                 label="ナマエ"
                                 fullWidth
                                 margin="normal"
+                                error={errors.partnerRuby ? true : false}
+                                helperText={errors.partnerRuby?.message}
                             />
                         )}
                     />
@@ -211,6 +228,8 @@ const BasicInfo = (props: any) => {
                                 label="住所"
                                 fullWidth
                                 margin="normal"
+                                error={errors.partnerAddress ? true : false}
+                                helperText={errors.partnerAddress?.message}
                             />
                         )}
                     />
@@ -223,6 +242,8 @@ const BasicInfo = (props: any) => {
                                 label="生年月日"
                                 fullWidth
                                 margin="normal"
+                                error={errors.partnerBD ? true : false}
+                                helperText={errors.partnerBD?.message}
                             />
                         )}
                     />

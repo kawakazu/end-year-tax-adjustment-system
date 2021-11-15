@@ -4,12 +4,13 @@ import { Layout } from './components/Layout';
 import { Home } from './components/Home';
 import InfoInput from './components/InfoInput';
 import Login from './components/api-authorization/Login';
-
+import Download from './components/Download';
+import CreateAccount from './components/api-authorization/CreateAccount';
 import './custom.css'
 import axios from 'axios';
 
-
-interface Props {}
+interface Props {
+}
 
 interface State {
   authenticated: boolean;
@@ -33,13 +34,12 @@ export default class App extends Component<Props, State> {
     }
     this.isLogin();
     setId();
-    console.log(idList);
   }
 
   async isLogin() {
     await axios.get('api/auth/islogin')
     .then((result) => {
-      this.setAuthenticated();
+      if (result.data) { this.setAuthenticated(); }
     })
     .catch((error) => {
       console.log(error.response);
@@ -52,20 +52,6 @@ export default class App extends Component<Props, State> {
   }
 
   render() {
-
-    var url = '/api/filedownload/download/1'; //+ idList.id;
-    axios({
-      url: url,
-      method: 'GET',
-      responseType: 'blob', //important
-    }).then((response)=> {
-      const url= window.URL.createObjectURL(new Blob([response.data]));
-      const link= document.createElement('a');
-      link.href= url;
-      link.setAttribute('download', 'test.xlsx');
-      document.body.appendChild(link);
-      link.click();
-    });
     return (
         <Layout
           authenticated = { this.state.authenticated }
@@ -73,15 +59,24 @@ export default class App extends Component<Props, State> {
         >
           <Route exact path='/' component={Home} />
           
-          {this.state.authenticated ? <Route path='/infoinput' component={InfoInput} /> : <Redirect to="/" />}
-          {/* <Route path='/infoinput' component={InfoInput} /> */}
-
-          {/* isAuth ? <Route {...props} /> : <Redirect to="/login" />; */}
-
-          <Route path='/authentication'>
+          {this.state.authenticated ? 
+            <Route path='/register' component={InfoInput} /> : 
+            <Redirect to="/" />
+          }
+          {this.state.authenticated ? 
+            <Route path='/download' component={Download} /> : 
+            <Redirect to="/" />
+          }
+          <Route path='/login'>
             {this.state.authenticated ? 
                 <Redirect to="/" /> :
                 <Login authenticated = { this.state.authenticated } setAuthenticated = { () => this.setAuthenticated() }/>
+            }
+          </Route>
+          <Route path='/create-account'>
+            {this.state.authenticated ? 
+                <Redirect to="/" /> :
+                <CreateAccount authenticated = { this.state.authenticated } setAuthenticated = { () => this.setAuthenticated() }/>
             }
           </Route>
         </Layout>

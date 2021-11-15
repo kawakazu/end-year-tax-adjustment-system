@@ -5,14 +5,13 @@ import Grid from '@mui/material/Grid';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import Button from '@mui/material/Button';
 import BasicInfo from './BasicInfo';
 import IncomeCal from './IncomeCal';
 import IncomeAdjust from './IncomAdjust';
 import Confirm from './Confirm';
-import axios from 'axios';
 
 import { Context } from './Context';
+import Complete from './Complete';
 
 function getSteps(): string[] {
   return [
@@ -24,7 +23,6 @@ function getSteps(): string[] {
 }
 
 function InfoInput() {
-  // const response = axios.get('/api/InfoInput');
   const [currentState, setCurrentState] = React.useState({});
   const value = {
       currentState,
@@ -38,9 +36,6 @@ function InfoInput() {
   const handleBack = () => {
       setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-  const handleReset = () => {
-      setActiveStep(0);
-  };
 
   function getStepContent(stepIndex: number) {
     switch (stepIndex) {
@@ -51,7 +46,7 @@ function InfoInput() {
       case 2:
           return <IncomeAdjust handleNext={handleNext} handleBack={handleBack}/>;
       case 3:
-          return <Confirm handleBack={handleBack}/>;
+          return <Confirm handleNext={handleNext} handleBack={handleBack}/>;
       default:
           return 'Unknown stepIndex';
     }
@@ -78,9 +73,13 @@ function InfoInput() {
           >
             {steps[activeStep]}
           </Typography>
-          <Context.Provider value={value}>
-              { getStepContent(activeStep) }
-          </Context.Provider>
+          {activeStep === steps.length ? (
+                    <Complete />
+                ) : (
+                    <Context.Provider value={value}>
+                        { getStepContent(activeStep)}
+                    </Context.Provider>
+          )}
         </Grid>
       </Grid>
     </Container>

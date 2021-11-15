@@ -57,7 +57,7 @@ export class NavMenu extends React.Component<Props> {
                   variant="text"
                   color="primary"
                   component={Link}
-                  to="/infoinput"
+                  to="/register"
                 >
                   Register
                 </Button> :
@@ -70,19 +70,28 @@ export class NavMenu extends React.Component<Props> {
                   Register
                 </Button>
               }
-              {/* <Button
-                variant="text"
-                color="primary"
-                component={Link}
-                to="/fetch-data"
-              >
-                Fetch-data
-              </Button> */}
+              {this.props.authenticated ?
+                <Button
+                  variant="text"
+                  color="primary"
+                  component={Link}
+                  to="/download"
+                >
+                  Download
+                </Button> :
+                <Button
+                  variant="text"
+                  color="primary"
+                  component={Link}
+                  to="/"
+                >
+                  Download
+                </Button>
+              }
             </nav>
             {this.props.authenticated ?
               <Button color="inherit" component={Link} to='/' onClick={this.Logout}>Logout</Button> :
-              <Button color="inherit" component={Link} to='/authentication'>Login</Button>
-              
+              <Button color="inherit" component={Link} to='/login'>Login</Button>
             }
           </Toolbar>
         </AppBar>

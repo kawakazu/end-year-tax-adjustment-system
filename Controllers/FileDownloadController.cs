@@ -1,20 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 using System.Threading.Tasks;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using ClosedXML.Excel;
-
-
-using myapp.Models;
 
 namespace myapp.Controllers
 {
@@ -31,7 +23,7 @@ namespace myapp.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<FileContentResult> Download(int id)
+        public async Task<FileContentResult> Download(int id, string japaneseEra, string year)
         {
             // DB取得
             var basicInof = await _context.BasicInfo.Where(m => m.ApplicationUserId  == id).FirstAsync();
@@ -43,8 +35,12 @@ namespace myapp.Controllers
                 var book = new XLWorkbook(@"./template/template.xlsx");
                 //シート名からシート取得
                 var sheet = book.Worksheet("申告書");
+                DateTime ce;
+                IDictionary<string, string> je = new Dictionary<string, string>();
 
                 // セルに設定
+
+                sheet.Cell(1,1).Value = japaneseEra + year + sheet.Cell(1,1).GetString();
                 // BasicInfo
                 sheet.Cell(7,4).Value = basicInof.TaxOffice;
                 sheet.Cell(6,18).Value = basicInof.Company;
@@ -66,7 +62,7 @@ namespace myapp.Controllers
                                           incomeCal.ExceptExp1 + incomeCal.MiscellaneousExp1 +
                                           incomeCal.PropertyExp1 + incomeCal.RetirementExp1;
                 sheet.Cell(48,22).FormulaA1 = "V38 + V43";
-                int incomeQuote1 = (int)sheet.Cell(48,22).GetValue<int>();
+                int incomeQuote1 = sheet.Cell(48,22).GetValue<int>();
                 // string[] classification1 = Classification1(incomeSum1);
                 sheet.Cell(56,25).Value = Classification1(incomeQuote1);
                 sheet.Cell(63,25).Value = BasicDeduction(incomeQuote1);
@@ -77,10 +73,56 @@ namespace myapp.Controllers
                                           incomeCal.ExceptExp2 + incomeCal.MiscellaneousExp2 +
                                           incomeCal.PropertyExp2 + incomeCal.RetirementExp2;
                 sheet.Cell(48,53).FormulaA1 = "BA38 + BA43";
-                sheet.Cell(49,97).FormulaR1C1 = "=IF(BT24=\"\",\"\",IF(BA48>1330000,\"\",IF(BA48>950000,\"④\",IF(BA48>480000,\"③\",IF(計算式!A2>1950,\"②\",\"①\")))))";
-                // string[] classification2 = Classification1(incomeSum2);
-                // sheet.Cell(56,25).Value = classification1[0];
-                // sheet.Cell(63,25).Value = classification1[1];
+                int incomeQuote2 = sheet.Cell(48,53).GetValue<int>();
+
+                if (basicInof.PartnerBD != "")
+                {
+                    ce = GetBirthDay(basicInof.PartnerBD);
+                    je = CEtoJE(ce);
+                    int age = GetAge(ce, DateTime.Today);
+                    // 配偶者の生年月日
+                    sheet.Cell(24,65).Value = je["JE"];
+                    sheet.Cell(24,72).Value = je["Year"];
+                    sheet.Cell(24,75).Value = je["Month"];
+                    sheet.Cell(24,78).Value = je["Day"];
+                    // 区分Ⅱ、配偶者控除の額、配偶者特別控除の額
+                    sheet.Cell(49,71).Value = Classification2(incomeQuote2, age);
+                    sheet.Cell(56,73).Value = SpousalDeduction(sheet.Cell(56,25).GetValue<string>(), sheet.Cell(49,71).GetValue<string>());
+                    sheet.Cell(63,73).Value = SpousalSpecialDeduction(sheet.Cell(56,25).GetValue<string>(), sheet.Cell(49,71).GetValue<string>(), incomeQuote2);
+                }
+
+                sheet.Cell(83,43).Value = incomeAdjust.DependentsNum;
+                sheet.Cell(86,31).Value = incomeAdjust.DependentsRuby;
+                sheet.Cell(88,31).Value = incomeAdjust.DependentsName;
+                sheet.Cell(88,43).Value = incomeAdjust.DependentsAdr;
+                sheet.Cell(88,55).Value = incomeAdjust.DependentsRel;
+                sheet.Cell(88,60).Value = incomeAdjust.DependentsInc;
+                sheet.Cell(84,70).Value = incomeAdjust.DependentsPrsEvid;
+                if (incomeAdjust.DependentsDB != "")
+                {
+                    ce = GetBirthDay(incomeAdjust.DependentsDB);
+                    je = CEtoJE(ce);
+                    sheet.Cell(83,55).Value = je["JE"];
+                    sheet.Cell(83,58).Value = je["Year"];
+                    sheet.Cell(83,61).Value = je["Month"];
+                    sheet.Cell(83,64).Value = je["Day"];
+                }
+                switch (incomeAdjust.RadioGroup) {
+                    case "1":
+                        sheet.Cell(82,6).Value = sheet.Cell(82,6).GetString().Replace("□", "✓");
+                        break;
+                    case "2":
+                        sheet.Cell(84,6).Value = sheet.Cell(82,6).GetString().Replace("□", "✓");
+                        break;
+                    case "3":
+                        sheet.Cell(86,6).Value = sheet.Cell(82,6).GetString().Replace("□", "✓");
+                        break;
+                    case "4":
+                        sheet.Cell(88,6).Value = sheet.Cell(82,6).GetString().Replace("□", "✓");
+                        break;
+                    default:
+                        break;
+                }
 
                 book.SaveAs(@"./template/output.xlsx");
             }
@@ -89,7 +131,49 @@ namespace myapp.Controllers
             return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "sample.xlsx");
         }
 
+        private DateTime GetBirthDay(string dob)
+        {
+            // DateTime birthDay = new Dictionary<string, int>();
+            string[] split =  dob.Split('/');
+            DateTime birthDay = new DateTime(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]));
+
+            return birthDay;
+        }
         // 西暦→和暦変換
+        private IDictionary<string, string> CEtoJE(DateTime sDate)
+        {
+            CultureInfo Japanese = new CultureInfo("ja-JP");
+            Japanese.DateTimeFormat.Calendar = new JapaneseCalendar();
+            string wDate = sDate.ToString("gg/y/M/d", Japanese);
+
+            IDictionary<string, string> map = new Dictionary<string, string>();
+            string[] split =  wDate.Split('/');
+
+            map.Add("JE", split[0]);
+            map.Add("Year", split[1]);
+            map.Add("Month", split[2]);
+            map.Add("Day", split[3]);
+
+            return map;
+        }
+
+        /// <summary>
+        /// 生年月日から年齢を計算する
+        /// </summary>
+        /// <param name="birthDate">生年月日</param>
+        /// <param name="today">現在の日付</param>
+        /// <returns>年齢</returns>
+        private int GetAge(DateTime birthDate, DateTime today)
+        {
+            int age = today.Year - birthDate.Year;
+            //現在の日付から年齢を引いた日付が誕生日より前ならば、1引く
+            if (today.AddYears(-age) < birthDate)
+            {
+                age--;
+            }
+
+            return age;
+        }
 
         private int PayrollIncomeDeduction(int income) {
             int salaryIncomeDeduction = 0;

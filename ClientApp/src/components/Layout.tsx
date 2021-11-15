@@ -9,11 +9,6 @@ interface Props {
 }
 
 export class Layout extends Component<Props> {
-
-  constructor(props: Props){
-    super(props)
-  }
-
   render () {
     return (
       <div>

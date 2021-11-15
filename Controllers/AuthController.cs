@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -60,18 +61,40 @@ namespace myapp.Controllers
             return Ok();
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApplicationUser>> GetAccount(int id) {
+            var account = await _context.ApplicationUser.Where(m => m.ApplicationUserId  == id).FirstAsync();
+            if (account == null)
+            {
+                return NotFound();
+            }
+            return account;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Create(ApplicationUser user)
+        {
+            user.ApplicationUserId = _context.ApplicationUser.Any() ?
+                        _context.ApplicationUser.Max(p => p.ApplicationUserId) + 1 : 1;
+            _context.ApplicationUser.Add(user);
+
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetAccount", new { id = user.ApplicationUserId }, user);
+        }
+
         [HttpGet]
-        // [AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IActionResult> IsLogin()
         {
             // Cookieが存在するかの処理
             var authResult = await HttpContext.AuthenticateAsync();
             if (authResult.Succeeded == false)
             {
-                return BadRequest("Failed to authenticated.");
+                return Ok(false);
             }
 
-            return Ok();
+            return Ok(true);
         }
     }
 }

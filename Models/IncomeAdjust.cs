@@ -11,6 +11,7 @@ namespace myapp.Models
          public string RadioGroup { get; set; }
          public string DependentsNum { get; set; }
          public string DependentsDB { get; set; }
+                       
          public string DependentsName { get; set; }
          public string DependentsRuby { get; set; }
          public string DependentsAdr { get; set; }

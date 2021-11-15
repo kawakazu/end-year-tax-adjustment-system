@@ -9,14 +9,16 @@ import TableCell from '@mui/material/TableCell';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useForm, Controller } from 'react-hook-form';
+import * as Yup from 'yup';
 import axios from 'axios';
 import { Context } from './Context';
 import { idList } from './../App';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 function createData(
     name: string, 
     income: "bussinessInc1" | "miscellaneousInc1" | "dividendInc1" | "propertyInc1" | "retirementInc1" | "exceptInc1" |  
-            "bussinessInc2" | "miscellaneousInc2" | "dividendInc2" | "propertyInc2" | "retirementInc2" | "exceptInc2", 
+            "bussinessInc2" | "miscellaneousInc2" | "dividendInc2" | "propertyInc2" | "retirementInc2" | "exceptInc2",
     requiredExp: "bussinessExp1" | "miscellaneousExp1" | "dividendExp1" | "propertyExp1" | "retirementExp1" | "exceptExp1" |
                  "bussinessExp2" | "miscellaneousExp2" | "dividendExp2" | "propertyExp2" | "retirementExp2" | "exceptExp2"
     ) {
@@ -79,15 +81,34 @@ interface SecdIncomeCal {
     exIncome2: number;
 }
 
-// const Input = (props: UseControllerProps<IncomCalData>) => {
-//     const { field, fieldState } = useController(props);
-  
-//     return (
-//         <>
-//             <TextField type="number" inputProps={{ style: {textAlign: 'right'} }} {...field} />
-//         </>
-//     );
-// }
+const incomeCalSchema = Yup.object().shape({
+    income1: Yup.number().positive('正の数を入力してください').integer('整数を入力してください').required('入力必須です').typeError('数字を入力してください'),
+    bussinessInc1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    bussinessExp1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    miscellaneousInc1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    miscellaneousExp1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    dividendInc1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    dividendExp1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    propertyInc1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    propertyExp1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    retirementInc1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    retirementExp1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    exceptInc1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    exceptExp1: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    income2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    bussinessInc2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    bussinessExp2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    miscellaneousInc2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    miscellaneousExp2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    dividendInc2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    dividendExp2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    propertyInc2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    propertyExp2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    retirementInc2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    retirementExp2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    exceptInc2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+    exceptExp2: Yup.number().integer('整数を入力してください').min(0, '正の数字を入力してください').typeError('数字を入力してください'),
+})
 
 function PayrollIncomeDeduction(income: number) {
     if (income >= 8500000) {
@@ -152,8 +173,8 @@ function Classification2(incomeQuote: number, age: number) {
 export let incomeCalFlag: boolean = false;
 export let incomeCalData: SecdIncomeCal;
 
-function IncomCal(props: any) {
-    const { control, handleSubmit, watch, getValues, reset } = useForm<IncomCalData>({
+const IncomCal = (props: any) => {
+    const { control, handleSubmit, watch, formState:{ errors }, getValues, reset } = useForm<IncomCalData>({
         defaultValues: {
             income1: 0,
             bussinessInc1: 0,
@@ -182,8 +203,10 @@ function IncomCal(props: any) {
             exceptInc2: 0,
             exceptExp2: 0,
         },
+        resolver: yupResolver(incomeCalSchema)
     });
     const { currentState, setCurrentState } = React.useContext(Context);
+    
     const income1 = Number(watch('income1'));
     const income2 = Number(watch('income2'));
     const expPayInc1 = [
@@ -269,13 +292,16 @@ function IncomCal(props: any) {
                                                 <TextField
                                                     {...field}
                                                     variant="standard"
+                                                    error={errors.income1 ? true : false}
+                                                    helperText={errors.income1?.message}
                                                 />
                                             )}
                                         />
                                     </TableCell>
                                     <TableCell align="center">{selfIncomeAmount1}</TableCell>
                             </TableRow>
-                            {rows1.map(row => (
+                            {
+                            rows1.map(row => (
                                 <TableRow key={row.name}>
                                     <TableCell align="center">{row.name}</TableCell>
                                     <TableCell align="center">
@@ -286,6 +312,8 @@ function IncomCal(props: any) {
                                                 <TextField
                                                     {...field}
                                                     variant="standard"
+                                                    error={errors[row.income] ? true : false}
+                                                    helperText={errors[row.income]?.message}
                                                 />
                                             )}
                                         />
@@ -298,6 +326,8 @@ function IncomCal(props: any) {
                                                 <TextField
                                                     {...field}
                                                     variant="standard"
+                                                    error={errors[row.requiredExp] ? true : false}
+                                                    helperText={errors[row.requiredExp]?.message}
                                                 />
                                             )}
                                         />
