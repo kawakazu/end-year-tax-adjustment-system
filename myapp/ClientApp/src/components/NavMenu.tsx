@@ -17,8 +17,8 @@ export class NavMenu extends React.Component<Props> {
     this.Logout = this.Logout.bind(this);
   }
 
-  async Logout() {
-    await axios.post('/api/auth/logout')
+  Logout() {
+    axios.post('/api/auth/logout')
       .then((results) => {
         console.log(results);
         document.cookie = "id=;";

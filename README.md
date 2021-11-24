@@ -13,10 +13,8 @@
 ```
 $ git clone https://github.com/kawakazu/end-year-tax-adjustment-system.git
 $ cd end-year-tax-adjustment
+$ docker-compose up -d
 $ dotnet dev-certs https --trust
-$ dotnet tool install --global dotnet-ef
-$ dotnet ef migrations add InitialCreate
-$ dotnet ef database update
 ```
 ### run
 end-year-tax-adjustment-systemディレクトリで
@@ -26,8 +24,8 @@ $ dotnet run
 「http://localhost:5001」にアクセスする。
 
 ## Requirement
-* Ubuntu 20.94
+* Ubuntu 20.04
+* Docker
 * node v14.17.1
 * yarn v1.22.10
-* React 17.0.2
 * .NET 5

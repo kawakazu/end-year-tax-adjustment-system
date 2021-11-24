@@ -36,8 +36,8 @@ export default class App extends Component<Props, State> {
     setId();
   }
 
-  async isLogin() {
-    await axios.get('api/auth/islogin')
+  isLogin() {
+    axios.get('api/auth/islogin')
     .then((result) => {
       if (result.data) { this.setAuthenticated(); }
     })

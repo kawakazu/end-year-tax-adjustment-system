@@ -27,8 +27,8 @@ const createAccountSchema = Yup.object().shape({
     password: Yup.string().required('パスワードを入力してください'),
 });
 
-async function CreateInfoInput(id: number) {
-    await axios.post('/api/InfoInput/PostBasicInfo', 
+function CreateInfoInput(id: number) {
+    axios.post('/api/InfoInput/PostBasicInfo', 
     { 
         ApplicationUserId: id,
         Company: "sample",
@@ -52,7 +52,7 @@ async function CreateInfoInput(id: number) {
         console.log(error.response);
     });
 
-    await axios.post('/api/infoinput/postincomecal', 
+    axios.post('/api/infoinput/postincomecal', 
     { 
         ApplicationUserId: id,
         Income1: 0,
@@ -90,7 +90,7 @@ async function CreateInfoInput(id: number) {
         console.log(error.response);
     });
 
-    await axios.post('/api/infoinput/postincomeadjust', 
+    axios.post('/api/infoinput/postincomeadjust', 
     { 
         ApplicationUserId: id,
         RadioGroup: "0",
@@ -121,9 +121,9 @@ const CreateAccount = (props: Props) => {
         resolver: yupResolver(createAccountSchema)
     });
 
-    const onSubmit = async (data: User) => {
+    const onSubmit = (data: User) => {
         console.log(data);
-        await axios.post('/api/auth/create', 
+        axios.post('/api/auth/create', 
         { 
             Email: data.mail, 
             Password: data.password 

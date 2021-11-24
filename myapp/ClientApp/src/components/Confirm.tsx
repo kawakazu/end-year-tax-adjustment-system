@@ -67,7 +67,7 @@ async function Update(
                       incomeCalList: number[],
                       incomeAdjustList: string[]
 ) {
-    await axios.put('/api/infoinput/putbasicinfo/1', 
+    axios.put('/api/infoinput/putbasicinfo/1', 
     {
         BasicInfoId: basicInfoList[0],
         ApplicationUserId: basicInfoList[1],
@@ -93,7 +93,7 @@ async function Update(
         console.log(error.response);
     });
 
-    await axios.put('/api/infoinput/putincomecal/1', 
+    axios.put('/api/infoinput/putincomecal/1', 
     { 
         IncomeCalId: incomeCalList[0],
         ApplicationUserId: incomeCalList[1],
@@ -132,7 +132,7 @@ async function Update(
         console.log(error.response);
     });
 
-    await axios.put('/api/infoinput/putincomeadjust/1', 
+    axios.put('/api/infoinput/putincomeadjust/1', 
     { 
         IncomeAdjustId: incomeAdjustList[0],
         ApplicationUserId: incomeAdjustList[1],

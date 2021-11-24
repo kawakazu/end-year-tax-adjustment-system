@@ -32,11 +32,11 @@ const Download = () => {
         },
         resolver: yupResolver(downloadSchema)
     });
-    const onSubmit = async (data: DownloadInputs) => {
+    const onSubmit = (data: DownloadInputs) => {
         console.log(data);
         // excel download
         var url = '/api/filedownload/download/' + idList.id;
-        await axios({
+        axios({
           url: url,
           method: 'GET',
           responseType: 'blob',
