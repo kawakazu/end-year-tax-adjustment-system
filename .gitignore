@@ -1,0 +1,27 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+myapp/ClientApp/node_modules
+
+# testing
+myapp/ClientApp/coverage
+
+# production
+myapp/ClientApp/build
+
+# misc
+myapp/ClientApp/.DS_Store
+myapp/ClientApp/.env.local
+myapp/ClientApp/.env.development.local
+myapp/ClientApp/.env.test.local
+myapp/ClientApp/.env.production.local
+
+myapp/ClientApp/npm-debug.log*
+myapp/ClientApp/yarn-debug.log*
+myapp/ClientApp/yarn-error.log*
+
+
+# dotnet
+myapp/bin
+myapp/obj
+myapp/template/output.xlsx

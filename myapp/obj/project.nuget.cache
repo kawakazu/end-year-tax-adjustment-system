@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "by/vaJzs95PNvP/hZV9LDJMZUdt0294143hj8YiW4XB939jiJzFWdsq4KQuLQldBW6sr3mlvKgh0fNXcbT7haA==",
+  "dgSpecHash": "YxVphXxtoh7Y5WTzhRnkAQb+tsPMDEn8LByL1K5tNmfeIub0WB3drt282FHlRUg9WWb1s9F+U+zNY/cK73JwUw==",
   "success": true,
-  "projectFilePath": "/home/kawakaz/workspace/myapp/myapp.csproj",
+  "projectFilePath": "/home/kawakaz/workspace/end-year-tax-adjustment-system/myapp/myapp.csproj",
   "expectedPackageFiles": [
     "/home/kawakaz/.nuget/packages/automapper/10.0.0/automapper.10.0.0.nupkg.sha512",
     "/home/kawakaz/.nuget/packages/closedxml/0.95.4/closedxml.0.95.4.nupkg.sha512",

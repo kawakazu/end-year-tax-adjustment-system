@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/kawakaz/workspace/myapp/myapp.csproj": {}
+    "/home/kawakaz/workspace/end-year-tax-adjustment-system/myapp/myapp.csproj": {}
   },
   "projects": {
-    "/home/kawakaz/workspace/myapp/myapp.csproj": {
+    "/home/kawakaz/workspace/end-year-tax-adjustment-system/myapp/myapp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/kawakaz/workspace/myapp/myapp.csproj",
+        "projectUniqueName": "/home/kawakaz/workspace/end-year-tax-adjustment-system/myapp/myapp.csproj",
         "projectName": "myapp",
-        "projectPath": "/home/kawakaz/workspace/myapp/myapp.csproj",
+        "projectPath": "/home/kawakaz/workspace/end-year-tax-adjustment-system/myapp/myapp.csproj",
         "packagesPath": "/home/kawakaz/.nuget/packages/",
-        "outputPath": "/home/kawakaz/workspace/myapp/obj/",
+        "outputPath": "/home/kawakaz/workspace/end-year-tax-adjustment-system/myapp/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/kawakaz/.nuget/NuGet/NuGet.Config"

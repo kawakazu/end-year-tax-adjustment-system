@@ -14,6 +14,8 @@
 $ git clone https://github.com/kawakazu/end-year-tax-adjustment-system.git
 $ cd end-year-tax-adjustment
 $ docker-compose up -d
+$ cd myapp
+$ dotnet build
 $ dotnet dev-certs https --trust
 ```
 ### run
